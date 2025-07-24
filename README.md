@@ -60,10 +60,9 @@ More tutorials and notebooks coming soon.
 
 Check out our [ROADMAP.md](./ROADMAP.md) for upcoming features, including:
 
-- Commutative diagram validation
 - (Co)limits and universal constructions
 - Functorial logic and transformation categories
-- Visual diagram rendering and export to LaTeX
+
 
 ---
 
