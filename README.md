@@ -1,8 +1,10 @@
-# 🐾 HyperCat
-
 <p align="center">
   <img src="./HyperCat_logo.png" alt="HyperCat Logo" width="340"/>
 </p>
+
+# 🐾 HyperCat
+
+
 
 > *A sleek and powerful Python library for modeling categories, functors, natural transformations, and 2-categories (hypercategories).*
 
