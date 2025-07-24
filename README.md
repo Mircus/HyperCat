@@ -35,7 +35,7 @@ git clone https://github.com/Mircus/HyperCat.git
 cd HyperCat
 pip install -e .
 
-📚 Browse our examples/ notebooks
+## 📚 Browse our examples/ notebooks
 
 🧭 Check the ROADMAP.md for upcoming features
 
