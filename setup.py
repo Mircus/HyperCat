@@ -6,6 +6,6 @@ setup(
     packages=find_packages(),
     install_requires=[],
     description="HyperCat: Category Theory and Hypercategory Toolkit",
-    author="Claude + Mirco",
+    author="Mirco  Mannucci",
     license="MIT",
 )
