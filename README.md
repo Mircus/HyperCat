@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./HyperCat_logo.png" alt="HyperCat Logo" width="340"/>
+  <img src="./HyperCat_logo.png" alt="HyperCat Logo" width="450"/>
 </p>
 
 # 🐾 HyperCat
