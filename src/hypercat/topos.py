@@ -1,4 +1,5 @@
 from typing import *
+from hypercat.core.core import Category, Object, Morphism
 
 class Topos(Category):
     """Represents an elementary topos."""
