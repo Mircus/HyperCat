@@ -194,6 +194,132 @@ More tutorials and notebooks coming soon.
 
 ---
 
+## 🔬 Future enhancement: composable agents (functional algebra)
+
+- Guiding principles
+  - Keep the 1-category core unchanged and tiny; all agent orchestration remains optional and fail-fast.
+  - Pure functions only; strong typing (no `Any` in public APIs); no hidden fallbacks.
+
+- Plan algebra (typed, composable)
+  - Concepts:
+    - **Action**: a pure function `(state) -> state` or `(state, ctx) -> state`.
+    - **Plan**: a tree describing how actions compose.
+    - **Step**: a leaf in the plan tree that runs a named action.
+  - Nodes:
+    - `Task`: run a single named action.
+    - `Sequence`: run child plans left-to-right.
+    - `Parallel`: run child plans in parallel and aggregate outputs via an explicit `aggregate_fn`.
+    - `Choose`: evaluate child plans and select one by an explicit `choose_fn` (or evaluator wiring at the agent layer).
+  - Builders: `task(name)`, `seqp(...)`, `parallel(..., aggregate_fn=...)`, `choose(..., choose_fn=...)`.
+  - Strict invariants: `Parallel` requires an aggregator; `Choose` requires a chooser; both validated fail-fast.
+
+- Focused transforms with lenses
+  - `Lens[S, A]` to zoom into a substate; `focus(lens, plan)` composes inner plans on `A` and lifts back to `S` immutably.
+
+- Loops/recursion
+  - `loop_while(predicate, body_plan)` applies `body_plan` while the predicate holds; pure and deterministic.
+
+- Tracing and durability
+  - Hierarchical `TraceNode` tree mirroring plan structure with timestamps and optional snapshots.
+  - Optional durable event log and time-travel debugging implemented in `extras/` (opt-in, never imported by core).
+
+- Concurrency (optional)
+  - Async interpreter for `Parallel` with deterministic aggregation; sync remains the default. Fail-fast if used without async support.
+
+- Decision wiring
+  - `Choose` can use an explicit `choose_fn` or an agent-level evaluator to pick branches (no silent defaults).
+
+- Resilience utilities (extras only)
+  - Pure decorators: `retry`, `throttle`, `cache`; explicit parameters, no global state.
+  - Robust JSON extraction helpers for LLM outputs (schema-driven), kept out of core.
+
+- Sample usage (sketch)
+  
+  ```python
+  from hypercat.agents.actions import task, seqp, parallel, choose  # optional module
+  from hypercat.agents.eval import run_structured_plan         # optional module
+
+  impl = {
+    'clean':   lambda s, ctx=None: s.strip(),
+    'upper':   lambda s, ctx=None: s.upper(),
+    'summ':    lambda s, ctx=None: s,        # placeholder pure actions
+    'keywords':lambda s, ctx=None: s,
+  }
+
+  plan = seqp(
+    task('clean'),
+    parallel(task('summ'), task('keywords')),   # requires aggregate_fn at run time
+    choose(task('upper'), task('clean'))   # requires choose_fn at run time
+  )
+
+  report = run_structured_plan(
+    plan,
+    impl,
+    input_value="  hello world  ",
+    aggregate_fn=lambda outs: tuple(outs),
+    choose_fn=lambda outs: 0,  # pick first branch
+    snapshot=True,
+  )
+  print(report.output)
+  ```
+
+This roadmap keeps HyperCat’s core categorical model pristine while offering a principled, typed, and composable agent layer as an optional enhancement.
+
+### How to build an agent
+
+1) Define actions (pure functions):
+
+```python
+skills = {
+  'clean': lambda s, ctx=None: s.strip(),
+  'upper': lambda s, ctx=None: s.upper(),
+}
+```
+
+2) Choose plan style:
+- Sequential only (Formal1):
+
+```python
+from hypercat.agents.actions import seq
+plan = seq('clean','upper')
+```
+
+- Structured (Sequence/Parallel/Choose):
+
+```python
+from hypercat.agents.actions import task, seqp, parallel, choose
+plan = seqp(task('clean'), parallel(task('upper'), task('clean')))
+```
+
+3) Run the plan:
+- Sequential:
+
+```python
+from hypercat.agents.eval import run_plan
+report = run_plan(plan, skills, "  hi  ")
+```
+
+- Structured:
+
+```python
+from hypercat.agents.eval import run_structured_plan
+report = run_structured_plan(
+  plan,
+  skills,
+  "  hi  ",
+  aggregate_fn=lambda outs: tuple(outs),
+  choose_fn=lambda outs: 0,
+)
+```
+
+4) Optional: Select the best among multiple sequential plans with an evaluator:
+
+```python
+from hypercat.agents.eval import Agent
+agent = Agent(implementation=skills, evaluator=lambda out: len(out))
+best_plan, best_report = agent.choose_best([seq('clean'), seq('clean','upper')], "  hi  ")
+```
+
 ## 🧵 Motto
 
 <p align="center">

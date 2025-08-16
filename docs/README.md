@@ -290,5 +290,5 @@ gantt
 
 1. Ops: product/slice with universal property checkers
 2. Plugins: Tamari/associahedron/MCTS search
-3. Adapters: natural transformations as skill adapters
+3. Adapters: natural transformations as action adapters
 4. Serialization: stable JSON for plans and small cats

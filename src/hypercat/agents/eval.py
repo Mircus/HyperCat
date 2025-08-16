@@ -4,8 +4,8 @@ import time
 from dataclasses import dataclass
 from typing import Any, Callable, Dict, Iterable, List, Mapping, Sequence, Tuple
 
-from .actions import seq
-from .runtime import strong_monoidal_functor, call_skill
+from .actions import seq, Plan
+from .runtime import strong_monoidal_functor, call_action, compile_structured_plan
 from ..core.presentation import Formal1
 
 
@@ -49,7 +49,7 @@ def run_plan(
         before = value if snapshot else None
         t0 = _now_ms()
         try:
-            value = call_skill(fn, value, ctx)
+            value = call_action(fn, value, ctx)
             ok = True
         except Exception:
             ok = False
@@ -61,6 +61,31 @@ def run_plan(
 
     score: Score = evaluator(value) if evaluator is not None else None
     return RunReport(output=value, score=score, trace=tuple(traces))
+
+
+def run_structured_plan(
+    plan: Plan,
+    implementation: Mapping[str, Callable[..., Any]],
+    input_value: Any,
+    *,
+    ctx: Any | None = None,
+    choose_fn: Callable[[List[Any]], int] | None = None,
+    aggregate_fn: Callable[[List[Any]], Any] | None = None,
+    snapshot: bool = False,
+) -> RunReport:
+    runner = compile_structured_plan(dict(implementation), plan, choose_fn=choose_fn, aggregate_fn=aggregate_fn)
+    t0 = _now_ms()
+    try:
+        output = runner(input_value, ctx)
+        ok = True
+    except Exception:
+        ok = False
+        raise
+    finally:
+        duration = _now_ms() - t0
+    step_name = type(plan).__name__
+    trace = [StepTrace(step_name, ok, duration, input_value if snapshot else None, output if snapshot else None)]
+    return RunReport(output=output, score=None, trace=tuple(trace))
 
 
 def choose_best(
@@ -95,13 +120,13 @@ def quick_functor_laws(
             comp = seq(f, g)
             for x in samples:
                 left = run_plan(comp, implementation, x, ctx=ctx).output
-                right = call_skill(implementation[g], call_skill(implementation[f], x, ctx), ctx)
+                right = call_action(implementation[g], call_action(implementation[f], x, ctx), ctx)
                 if left != right:
                     raise AssertionError(f"Functor law failed: F({g}∘{f}) != F({g})∘F({f}) on {x}")
     # Identity if provided
     if id_name is not None:
         if id_name not in implementation:
-            raise AssertionError(f"identity skill '{id_name}' not in implementation")
+            raise AssertionError(f"identity action '{id_name}' not in implementation")
         for x in samples:
             if run_plan(seq(id_name), implementation, x, ctx=ctx).output != x:
                 raise AssertionError("Identity law failed: F(id)(x) != x")
