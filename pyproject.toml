@@ -1,28 +1,55 @@
 [build-system]
-requires = ["setuptools>=61.0"]
-build-backend = "setuptools.build_meta"
+requires = ["poetry-core>=1.9.0"]
+build-backend = "poetry.core.masonry.api"
 
-[project]
+[tool.poetry]
 name = "hypercat"
 version = "0.1.0"
-description = "A sleek and expressive library for modeling categories, functors, and higher categorical structures."
-authors = [
-  {name = "Mirco Mannucci", email = "your@email.com"}
-]
+description = "HyperCat: functional core for categories with pluginable extras"
+authors = ["You <you@example.com>"]
+license = "MIT"
 readme = "README.md"
-requires-python = ">=3.8"
-license = {text = "MIT"}
-dependencies = [
-  "networkx",
-  "matplotlib",
-  "jupyter",
-  "pytest"
+packages = [{ include = "hypercat", from = "src" }]
+keywords = ["category-theory", "functional", "dsl"]
+homepage = "https://github.com/yourorg/hypercat"
+repository = "https://github.com/yourorg/hypercat"
+documentation = "https://github.com/yourorg/hypercat#readme"
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Typing :: Typed",
 ]
 
-[tool.setuptools]
-package-dir = {"" = "src"}
-packages = ["hypercat"]
-include-package-data = true
+[tool.poetry.dependencies]
+python = ">=3.9,<3.13"
+typing-extensions = {version = ">=4.7", python = "<3.11"}
 
-[tool.setuptools.packages.find]
-where = ["src"]
+# optional deps (extras placeholders; core should not import these at runtime)
+networkx = {version = ">=3.1", optional = true}
+graphviz = {version = ">=0.20.1", optional = true}
+pydot = {version = ">=1.4.2", optional = true}
+numpy = {version = ">=1.24", optional = true}
+
+[tool.poetry.extras]
+tamari = ["networkx"]
+viz = ["graphviz", "pydot"]
+mcts = ["numpy"]
+all = ["networkx", "graphviz", "pydot", "numpy"]
+
+[tool.poetry.group.dev.dependencies]
+pytest = ">=8.2"
+hypothesis = ">=6.98"
+mypy = ">=1.8"
+ruff = ">=0.5.0"
+build = ">=1.2"
+twine = ">=5.0"
+pytest-cov = ">=5.0"
+
+[tool.ruff]
+line-length = 100
+extend-select = ["I", "F", "E", "W", "B", "UP"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_unused_ignores = true
