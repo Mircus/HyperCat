@@ -120,14 +120,14 @@ Minimal end-to-end example with a runner and scorer:
 from hypercat.agents.actions import seq
 from hypercat.agents.eval import Agent
 
-skills = {
+actions = {
   'denoise': lambda s, ctx=None: s.replace('~',''),
   'edges':   lambda s, ctx=None: ''.join(ch for ch in s if ch.isalpha()),
   'segment': lambda s, ctx=None: s.upper(),
   'merge':   lambda s, ctx=None: f"[{s}]",
 }
 
-agent = Agent(implementation=skills, evaluator=lambda out: len(out))
+agent = Agent(implementation=actions, evaluator=lambda out: len(out))
 plan1 = seq('denoise','merge')
 plan2 = seq('denoise','edges','segment','merge')
 
@@ -150,7 +150,7 @@ print(exec_gantt_mermaid(report))
 from hypercat.agents.actions import seq
 from hypercat.agents.runtime import strong_monoidal_functor
 
-skills = {
+actions = {
   'denoise': lambda s: s.replace('~',''),
   'edges':   lambda s: ''.join(ch for ch in s if ch.isalpha()),
   'segment': lambda s: s.upper(),
@@ -158,7 +158,7 @@ skills = {
 }
 
 plan = seq('denoise','edges','segment','merge')
-F = strong_monoidal_functor(skills)
+F = strong_monoidal_functor(actions)
 print(F(plan)("~a~b_c-1"))  # -> [ABC]
 ```
 
@@ -203,14 +203,14 @@ More tutorials and notebooks coming soon.
 - Plan algebra (typed, composable)
   - Concepts:
     - **Action**: a pure function `(state) -> state` or `(state, ctx) -> state`.
-    - **Plan**: a tree describing how actions compose.
-    - **Step**: a leaf in the plan tree that runs a named action.
+    - **Task**: a plan leaf that invokes a named action.
+    - **Plan**: a tree describing how tasks compose.
   - Nodes:
     - `Task`: run a single named action.
     - `Sequence`: run child plans left-to-right.
     - `Parallel`: run child plans in parallel and aggregate outputs via an explicit `aggregate_fn`.
     - `Choose`: evaluate child plans and select one by an explicit `choose_fn` (or evaluator wiring at the agent layer).
-  - Builders: `task(name)`, `seqp(...)`, `parallel(..., aggregate_fn=...)`, `choose(..., choose_fn=...)`.
+  - Builders: `task(name)`, `sequence(...)`, `parallel(..., aggregate_fn=...)`, `choose(..., choose_fn=...)`.
   - Strict invariants: `Parallel` requires an aggregator; `Choose` requires a chooser; both validated fail-fast.
 
 - Focused transforms with lenses
@@ -246,7 +246,7 @@ More tutorials and notebooks coming soon.
     'keywords':lambda s, ctx=None: s,
   }
 
-  plan = seqp(
+  plan = sequence(
     task('clean'),
     parallel(task('summ'), task('keywords')),   # requires aggregate_fn at run time
     choose(task('upper'), task('clean'))   # requires choose_fn at run time
@@ -265,60 +265,29 @@ More tutorials and notebooks coming soon.
 
 This roadmap keeps HyperCat’s core categorical model pristine while offering a principled, typed, and composable agent layer as an optional enhancement.
 
-### How to build an agent
+### Future improvements (prioritized)
 
-1) Define actions (pure functions):
+1) Strong typing for agents
+- Introduce generics: `Action[State, Ctx, Out]`, parameterized `Plan[State, Ctx, Out]`.
+- Reduce/eradicate `Any` in public agent APIs.
 
-```python
-skills = {
-  'clean': lambda s, ctx=None: s.strip(),
-  'upper': lambda s, ctx=None: s.upper(),
-}
-```
+2) Structured trace tree
+- Hierarchical `TraceNode` per plan node with event ids, timestamps, before/after snapshots.
 
-2) Choose plan style:
-- Sequential only (Formal1):
+3) Extras: helpers for explicit composition
+- Aggregators: `aggregate_tuple`, `aggregate_concat`, `aggregate_merge_dicts`.
+- Choosers: `choose_argmax`, `choose_argmin` by scoring function.
 
-```python
-from hypercat.agents.actions import seq
-plan = seq('clean','upper')
-```
+4) Async parallel interpreter (optional)
+- `compile_structured_plan_async` with deterministic aggregation order.
 
-- Structured (Sequence/Parallel/Choose):
+5) Lenses and loops
+- `Lens[S, A]` and `focus(lens, plan)` for substate transforms.
+- `loop_while(predicate, body_plan)` for bounded iteration.
 
-```python
-from hypercat.agents.actions import task, seqp, parallel, choose
-plan = seqp(task('clean'), parallel(task('upper'), task('clean')))
-```
-
-3) Run the plan:
-- Sequential:
-
-```python
-from hypercat.agents.eval import run_plan
-report = run_plan(plan, skills, "  hi  ")
-```
-
-- Structured:
-
-```python
-from hypercat.agents.eval import run_structured_plan
-report = run_structured_plan(
-  plan,
-  skills,
-  "  hi  ",
-  aggregate_fn=lambda outs: tuple(outs),
-  choose_fn=lambda outs: 0,
-)
-```
-
-4) Optional: Select the best among multiple sequential plans with an evaluator:
-
-```python
-from hypercat.agents.eval import Agent
-agent = Agent(implementation=skills, evaluator=lambda out: len(out))
-best_plan, best_report = agent.choose_best([seq('clean'), seq('clean','upper')], "  hi  ")
-```
+6) Agent quality-of-life
+- Let `Agent` provide an evaluator-backed `choose_fn` wiring for `Choose`.
+- Add end-to-end examples mixing seq/parallel/choose/focus/loop.
 
 ## 🧵 Motto
 

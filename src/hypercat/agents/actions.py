@@ -62,3 +62,8 @@ def choose(*items: Union[Plan, str]) -> Plan:
 def parallel(*items: Union[Plan, str]) -> Plan:
     return Parallel(tuple(_as_plan(i) for i in items))
 
+
+# Preferred explicit name for sequential composition (alias of seqp)
+def sequence(*items: Union[Plan, str]) -> Plan:
+    return Sequence(tuple(_as_plan(i) for i in items))
+

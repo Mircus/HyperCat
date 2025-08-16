@@ -16,6 +16,16 @@ Minimal, composable pipelines built from named actions.
 
 If the names feel similar, remember: Task calls an Action. Actions are functions; Tasks are nodes in a plan.
 
+## Plan tree
+
+- The plan is an immutable, typed tree of nodes: `Task`, `Sequence`, `Parallel`, `Choose`.
+- It is an abstract syntax tree for the HyperCat agent DSL, not Python’s AST.
+- Its semantics are defined by the interpreter:
+  - `Sequence`: ordered composition (feed-forward through children)
+  - `Parallel`: fan-out to children, then aggregate outputs with `aggregate_fn`
+  - `Choose`: evaluate branches, then select exactly one via `choose_fn`
+- This tree is a pure data structure (no side effects), suitable for tracing, testing, or serialization.
+
 ## Define actions
 ```python
 actions = {
