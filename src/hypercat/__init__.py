@@ -1,7 +1,16 @@
-from .core import Object, Morphism
-from .category import Category
-from .functor import Functor
-from .natural import NaturalTransformation
-from .twocategory import TwoCell, TwoCategory
-from .standard import StandardCategories
-from .example import example_usage
+from importlib.metadata import version, PackageNotFoundError
+
+__all__ = [
+	"core",
+	"agents",
+	"extras",
+	"plugins",
+]
+
+try:
+	__version__ = version("hypercat")
+except PackageNotFoundError:
+	__version__ = "0.0.0"
+
+# Minimal friendly re-exports for the new core API
+from .core.presentation import Obj, ArrowGen, Formal1, Presentation  # noqa: E402,F401
