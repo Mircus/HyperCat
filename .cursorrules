@@ -1,0 +1,52 @@
+project_name: HyperCat
+
+principles:
+  - Fail-fast: never use silent fallbacks or placeholder implementations
+  - Functional, composable, modular: small pure functions orchestrated at the edges
+  - Strong typing: mypy --strict; expose py.typed; avoid Any where possible
+  - Category theory core: keep core minimal and law-centric (presentations, formal paths)
+  - No backward compatibility with legacy API unless explicitly requested
+
+layout:
+  src/hypercat/
+    - __init__.py: thin re-exports, version detection only
+    - py.typed: typing marker
+    - core/: minimal, typed, independent of heavy deps
+      - presentation.py: Obj, ArrowGen, Formal1, Presentation
+      - category.py: Cat (identities, composition table)
+      - builder.py: obj, arrow, build_presentation (adds identities, validates)
+      - ops.py: identity, compose, normalize on Formal1
+      - functor.py: Functor (object/morphism maps), apply_functor(Formal1)
+      - convert.py: to_dict/from_dict for Presentation
+    - agents/: minimal runtime over Formal1
+      - actions.py: action, seq
+      - runtime.py: strong_monoidal_functor; mode=="sequential" only (raise otherwise)
+    - extras/: optional, fail-fast stubs only; never imported by core
+    - plugins/: optional registry, fail-fast by default
+    - laws.py: generic law engine (Protocol+dataclasses)
+    - laws_category.py: category laws (identities, associativity) using engine
+
+coding_style:
+  - Keep functions small; separate control flow from pure logic
+  - No side effects in core; IO and state at the boundary
+  - Raise explicit exceptions on invalid states; avoid try/except around expected failures
+  - Do not add logging/prints in core; tests should assert behavior
+
+tests:
+  - Place tests in tests/ with pytest
+  - Cover: builder identities, functor mapping, agent runtime pipeline, category laws
+
+tooling:
+  - Use Poetry; extras are optional and not imported at runtime
+  - Lint: ruff; Types: mypy --strict
+
+conventions:
+  - Arrow identity names: "id:<ObjName>"
+  - Formal1 factors are strings naming generators or identities
+  - All new structures MUST provide a LawSuite and pass core suites in CI
+
+extensibility:
+  - New modules must not import extras/plugins from core
+  - Add new algebraic structures as separate modules under core/ with pure functions
+  - Any runtime adapter must live under agents/ or plugins/
+

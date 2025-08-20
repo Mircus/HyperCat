@@ -1,4 +1,0 @@
-networkx
-matplotlib
-jupyter
-pytest
