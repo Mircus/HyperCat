@@ -9,19 +9,30 @@ description = "A sleek and expressive library for modeling categories, functors,
 authors = [
   {name = "Mirco Mannucci", email = "your@email.com"}
 ]
+maintainers = [
+  {name = "Kishore", email = "shimikeri.kishore@gmail.com"}
+]
 readme = "README.md"
 requires-python = ">=3.8"
 license = {text = "MIT"}
+keywords = ["category-theory", "mathematics", "functors", "morphisms", "topology", "algebra"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Science/Research",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering :: Mathematics",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+]
 dependencies = [
-  "networkx",
-  "matplotlib",
-  "jupyter",
-  "pytest"
+  "networkx>=2.6",
+  "matplotlib>=3.3",
+  "jupyter>=1.0",
+  "pytest>=6.0"
 ]
 
 [tool.setuptools]
 package-dir = {"" = "src"}
-packages = ["hypercat"]
 include-package-data = true
 
 [tool.setuptools.packages.find]

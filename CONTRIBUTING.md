@@ -33,6 +33,61 @@ Before submitting:
 - Write clear docstrings and inline comments
 - Include minimal unit tests for new features (we use `pytest`)
 
+### 🧪 Testing Instructions
+
+**Setup Development Environment:**
 ```bash
-# To run tests:
-pytest tests/
+# Clone the repository
+git clone https://github.com/yourusername/HyperCat.git
+cd HyperCat
+
+# Install in editable mode
+pip install -e .
+
+# Install development dependencies
+pip install pytest jupyter nbclient
+```
+
+**Run Tests:**
+```bash
+# Run all tests
+pytest
+
+# Run specific test file
+pytest src/tests/testcat.py
+
+# Run with verbose output
+pytest -v
+```
+
+**Test Notebooks:**
+```bash
+# Test that all notebooks run without errors
+jupyter nbconvert --execute --to notebook examples/*.ipynb
+
+# Test specific notebook
+jupyter nbconvert --execute --to notebook examples/00_quickstart.ipynb
+```
+
+**Import Smoke Test:**
+```bash
+# Verify package imports correctly
+python -c "
+import hypercat
+from hypercat.core import Category, Object, Morphism
+print('hypercat ok:', getattr(hypercat, '__version__', 'unknown'))
+"
+```
+
+**Code Quality Checks:**
+```bash
+# Check import structure (no circular imports)
+python -c "import hypercat; print('All imports successful')"
+
+# Check that core classes are properly exposed
+python -c "
+from hypercat import Category, Object, Morphism, Functor, NaturalTransformation
+from hypercat.categories import StandardCategories
+from hypercat.higher import TwoCategory
+print('All key classes accessible')
+"

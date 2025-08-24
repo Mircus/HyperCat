@@ -1,3 +1,8 @@
+from typing import Dict, Set, Any
+from collections import defaultdict
+from hypercat.topological_space import TopologicalSpace
+
+
 class SimplicialSet:
     """Represents a simplicial set."""
     
@@ -7,7 +12,7 @@ class SimplicialSet:
         self.face_maps: Dict = {}
         self.degeneracy_maps: Dict = {}
     
-    def add_simplex(self, n: int, simplex: Any) -> 'SimplicalSet':
+    def add_simplex(self, n: int, simplex: Any) -> 'SimplicialSet':
         """Add an n-simplex."""
         self.simplices[n].add(simplex)
         return self

@@ -1,3 +1,9 @@
+from typing import Set, Dict, Any
+from collections import defaultdict
+from hypercat.core.core import Object
+from hypercat.higher.simplicial_set import SimplicialSet
+
+
 class InfinityCategory:
     """Represents an (∞,1)-category."""
     
@@ -17,7 +23,7 @@ class InfinityCategory:
         self.morphisms[n].add(morph)
         return self
     
-    def nerve(self) -> 'SimplicalSet':
+    def nerve(self) -> 'SimplicialSet':
         """Compute the nerve of the ∞-category."""
         # Simplified implementation
-        return SimplicalSet(f"Nerve({self.name})")
+        return SimplicialSet(f"Nerve({self.name})")

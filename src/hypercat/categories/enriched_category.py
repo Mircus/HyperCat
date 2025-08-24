@@ -1,4 +1,6 @@
+from typing import Set, Dict, Tuple
 from hypercat.core.core import Category, Object, Morphism
+
 class EnrichedCategory:
     """Category enriched over a monoidal category."""
     

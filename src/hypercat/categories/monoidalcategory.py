@@ -1,3 +1,6 @@
+from typing import Optional, Callable, Dict
+from hypercat.core.core import Category, Object, Morphism
+
 # Advanced Category Constructions
 class MonoidalCategory(Category):
     """Represents a monoidal category."""

@@ -1,6 +1,6 @@
 """
-Week 1: Basic Constructor That Actually Works
-No fancy stuff. Just build the damn colimits.
+Basic category construction utilities.
+Provides core functionality for building categories and their limits/colimits.
 """
 
 from typing import List, Optional, Dict, Set, Tuple, Any, Union

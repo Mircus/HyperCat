@@ -1,3 +1,5 @@
+from hypercat.core.core import Category, Functor, NaturalTransformation, Object, Morphism
+
 class FunctorCategory(Category):
     """Represents a functor category [C, D] of functors from C to D."""
     

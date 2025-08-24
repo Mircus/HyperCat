@@ -1,3 +1,5 @@
+from typing import Dict, Tuple, Any
+
 # Homotopy Type Theory Elements  
 class HomotopyType:
     """Represents a homotopy type."""

@@ -1,6 +1,6 @@
 """
-Week 3: Basic Analysis Tools That Actually Work
-Answer the basic questions about morphisms and categories.
+Basic analysis tools for categories and morphisms.
+Provides functionality to analyze categorical properties and structures.
 """
 
 from typing import List, Dict, Set, Tuple, Any, Optional, Callable, Union

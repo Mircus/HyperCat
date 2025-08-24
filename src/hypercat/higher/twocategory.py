@@ -1,7 +1,6 @@
 
 from typing import Dict, Set, Tuple
-from .core import Morphism
-from .category import Category
+from hypercat.core.core import Morphism, Category
 
 class TwoCell:
     def __init__(self, name: str, source: Morphism, target: Morphism):

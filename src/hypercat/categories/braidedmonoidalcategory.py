@@ -1,3 +1,7 @@
+from typing import Dict, Tuple
+from hypercat.core.core import Object, Morphism
+from hypercat.categories.monoidalcategory import MonoidalCategory
+
 class BraidedMonoidalCategory(MonoidalCategory):
     """Represents a braided monoidal category."""
     

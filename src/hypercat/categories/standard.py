@@ -1,11 +1,11 @@
 """
-Week 2: Standard Categories That Actually Work
-Give people real categories to work with, not empty shells.
+Standard category implementations with concrete examples.
+Provides working categories for finite sets, posets, types, and groups.
 """
 
 from typing import List, Dict, Set, Tuple, Any, Optional, Callable, Union
 from hypercat.core.core import Category, Object, Morphism, Functor
-from basic_constructor import BasicConstructor, add_basic_constructor_to_category
+# from basic_constructor import BasicConstructor, add_basic_constructor_to_category
 import itertools
 from functools import partial
 
@@ -20,7 +20,7 @@ class FiniteSetCategory(Category):
         self._build_functions()
         
         # Add constructor methods
-        add_basic_constructor_to_category()
+        # add_basic_constructor_to_category()
     
     def _build_finite_sets(self):
         """Build actual finite sets as objects"""
@@ -191,7 +191,7 @@ class PosetCategory(Category):
         self.order = order_relation
         self._build_poset_category()
         
-        add_basic_constructor_to_category()
+        # add_basic_constructor_to_category()
     
     def _build_poset_category(self):
         """Build category from poset"""
@@ -313,7 +313,7 @@ class TypeCategory(Category):
         self._build_basic_types()
         self._build_type_constructors()
         
-        add_basic_constructor_to_category()
+        # add_basic_constructor_to_category()
     
     def _build_basic_types(self):
         """Build basic types"""
@@ -484,7 +484,7 @@ class GroupCategory(Category):
         self.group_identity = identity
         self._build_group_category()
         
-        add_basic_constructor_to_category()
+        # add_basic_constructor_to_category()
     
     def _build_group_category(self):
         """Build one-object category from group"""
@@ -584,6 +584,47 @@ class StandardCategories:
         elements = {"⊥", "⊤"}
         order = {("⊥", "⊥"), ("⊤", "⊤"), ("⊥", "⊤")}
         return PosetCategory("Bool", elements, order)
+    
+    @staticmethod
+    def terminal_category():
+        """Create the terminal category 1 (one object, one morphism)"""
+        from hypercat.core.core import Category, Object
+        cat = Category("1")
+        obj = Object("*")
+        cat.add_object(obj)
+        return cat
+    
+    @staticmethod
+    def initial_category():
+        """Create the initial category 0 (no objects, no morphisms)"""
+        from hypercat.core.core import Category
+        return Category("0")
+    
+    @staticmethod
+    def discrete_category(objects):
+        """Create discrete category from list of object names"""
+        from hypercat.core.core import Category, Object
+        cat = Category("Discrete")
+        for obj_name in objects:
+            obj = Object(str(obj_name))
+            cat.add_object(obj)
+        return cat
+    
+    @staticmethod
+    def arrow_category():
+        """Create the arrow category → (two objects, one non-identity morphism)"""
+        from hypercat.core.core import Category, Object, Morphism
+        cat = Category("→")
+        
+        zero = Object("0")
+        one = Object("1") 
+        cat.add_object(zero)
+        cat.add_object(one)
+        
+        arrow = Morphism("→", zero, one)
+        cat.add_morphism(arrow)
+        
+        return cat
 
 
 # DEMONSTRATION FUNCTION

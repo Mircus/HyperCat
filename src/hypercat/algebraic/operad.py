@@ -1,3 +1,7 @@
+from typing import Dict, Set, Optional, Any
+from collections import defaultdict
+from hypercat.core.core import Object, Morphism
+
 # Operads and Algebraic Structures
 class Operad:
     """Represents an operad."""
@@ -31,4 +35,4 @@ class Algebra:
     def set_structure_map(self, operation: Any, structure_morph: Morphism) -> 'Algebra':
         """Set how an operad operation acts on the algebra."""
         self.structure_maps[operation] = structure_morph
-        return self"""
+        return self

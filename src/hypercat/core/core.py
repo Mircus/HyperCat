@@ -5,7 +5,7 @@ A library that actually implements category theory correctly:
 - Diagrams as functors
 - Cones as natural transformations
 - Universal properties that work
-- Real commutative reasoning
+- Commutative diagram verification
 - Proper categorical constructions
 """
 
@@ -695,7 +695,7 @@ class NaturalTransformation:
 # Test the real foundations
 def test_categorical_foundations():
     """Test that our foundations actually work categorically."""
-    print("=== Testing Real Categorical Foundations ===\n")
+    print("=== Testing Categorical Foundations ===\n")
     
     # 1. Create a category with proper composition
     print("1. Testing Category with Composition:")
@@ -893,7 +893,7 @@ def test_universal_properties():
 
 def demonstrate_real_category_theory():
     """Show the library doing actual category theory."""
-    print("\n=== Real Category Theory in Action ===\n")
+    print("\n=== Category Theory Demonstrations ===\n")
     
     # 1. Build the category of finite sets and functions (simplified)
     print("1. Category of Finite Sets:")
@@ -1023,7 +1023,7 @@ def demonstrate_real_category_theory():
     # This would commute if we set up the morphisms correctly
     print(f"Paths exist for commutativity test")
     
-    print("\n=== Real Category Theory Demo Complete ===")
+    print("\n=== Category Theory Demo Complete ===")
 
 
 if __name__ == "__main__":
